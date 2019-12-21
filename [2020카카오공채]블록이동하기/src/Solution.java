@@ -1,18 +1,5 @@
 import java.util.ArrayDeque;
 
-class Drone {
-
-    int[][] location;
-    boolean direction;
-    int time;
-
-    public Drone(int[][] location, boolean direction, int time) {
-        this.location = location;
-        this.direction = direction;
-        this.time = time;
-    }
-}
-
 public class Solution {
 
     boolean[][][][] visited;
@@ -36,13 +23,15 @@ public class Solution {
 
     public int solution(int[][] board) {
 
+        int answer = Integer.MAX_VALUE;
+
+        this.N = board.length;
+        this.board = board;
+
         ArrayDeque<Drone> arrayDeque = new ArrayDeque<>();
         Drone drone;
 
-        N = board.length;
-        this.board = board;
         visited = new boolean[N][N][N][N];
-        int answer = Integer.MAX_VALUE;
 
         int[][] location, temp;
         boolean direction;
@@ -66,108 +55,36 @@ public class Solution {
 
             for(int i = 0; i < 4; i++) {
 
-                if(direction) {
+                for(int j = 0; j < 2; j++) {
 
-                    if(i == 0 || i == 2) {
+                    temp = new int[2][2];
 
-                        for(int j = 0; j < 2; j++) {
+                    temp[j][0] = location[j][0];
+                    temp[j][1] = location[j][1];
+                    dir = j == 0 ? 1 : 0;
 
-                            temp = new int[2][2];
+                    temp[dir][0] = location[j][0] + loX[i];
+                    temp[dir][1] = location[j][1] + loY[i];
 
-                            temp[j][0] = location[j][0];
-                            temp[j][1] = location[j][1];
-                            dir = j == 0 ? 1 : 0;
+                    if(inspectArea(location[dir], i))
+                        continue;
+                    if(checkBoundary(temp) || checkVisited(temp))
+                        continue;
 
-                            temp[dir][0] = location[j][0] + loX[i];
-                            temp[dir][1] = location[j][1] + loY[i];
-
-                            if(inspectArea(location[dir], i))
-                                continue;
-                            if(checkBoundary(temp) || checkVisited(temp))
-                                continue;
-
-                            visited[temp[0][0]][temp[0][1]][temp[1][0]][temp[1][1]] = true;
-                            arrayDeque.add(new Drone(temp, false, time + 1));
-                        }
-                        temp = new int[2][2];
-
-                        for(int j = 0; j < 2; j++) {
-                            temp[j][0] = location[j][0] + loX[i];
-                            temp[j][1] = location[j][1] + loY[i];
-                        }
-                        if(checkBoundary(temp) || checkVisited(temp))
-                            continue;
-
-                        visited[temp[0][0]][temp[0][1]][temp[1][0]][temp[1][1]] = true;
-                        arrayDeque.add(new Drone(temp, false, time + 1));
-                    }
-                    else {
-
-                        temp = new int[2][2];
-
-                        for(int j = 0; j < 2; j++) {
-                            temp[j][0] = location[j][0] + loX[i];
-                            temp[j][1] = location[j][1] + loY[i];
-                        }
-
-                        if(checkBoundary(temp) || checkVisited(temp))
-                            continue;
-
-                        visited[temp[0][0]][temp[0][1]][temp[1][0]][temp[1][1]] = true;
-                        arrayDeque.add(new Drone(temp, true, time + 1));
-                    }
+                    visited[temp[0][0]][temp[0][1]][temp[1][0]][temp[1][1]] = true;
+                    arrayDeque.add(new Drone(temp, !direction, time + 1));
                 }
-                else {
+                temp = new int[2][2];
 
-                    if(i == 1 || i == 3) {
-
-                        for(int j = 0; j < 2; j++) {
-
-                            temp = new int[2][2];
-
-                            temp[j][0] = location[j][0];
-                            temp[j][1] = location[j][1];
-                            dir = j == 0 ? 1 : 0;
-
-                            temp[dir][0] = location[j][0] + loX[i];
-                            temp[dir][1] = location[j][1] + loY[i];
-
-
-                            if(inspectArea(location[dir], i))
-                                continue;
-                            if(checkBoundary(temp) || checkVisited(temp))
-                                continue;
-
-                            visited[temp[0][0]][temp[0][1]][temp[1][0]][temp[1][1]] = true;
-                            arrayDeque.add(new Drone(temp, true, time + 1));
-                        }
-                        temp = new int[2][2];
-
-                        for(int j = 0; j < 2; j++) {
-                            temp[j][0] = location[j][0] + loX[i];
-                            temp[j][1] = location[j][1] + loY[i];
-                        }
-                        if(checkBoundary(temp) || checkVisited(temp))
-                            continue;
-
-                        visited[temp[0][0]][temp[0][1]][temp[1][0]][temp[1][1]] = true;
-                        arrayDeque.add(new Drone(temp, false, time + 1));
-                    }
-                    else {
-
-                        temp = new int[2][2];
-
-                        for(int j = 0; j < 2; j++) {
-                            temp[j][0] = location[j][0] + loX[i];
-                            temp[j][1] = location[j][1] + loY[i];
-                        }
-                        if(checkBoundary(temp) || checkVisited(temp))
-                            continue;
-
-                        visited[temp[0][0]][temp[0][1]][temp[1][0]][temp[1][1]] = true;
-                        arrayDeque.add(new Drone(temp, false, time + 1));
-                    }
+                for(int j = 0; j < 2; j++) {
+                    temp[j][0] = location[j][0] + loX[i];
+                    temp[j][1] = location[j][1] + loY[i];
                 }
+                if(checkBoundary(temp) || checkVisited(temp))
+                    continue;
+
+                visited[temp[0][0]][temp[0][1]][temp[1][0]][temp[1][1]] = true;
+                arrayDeque.add(new Drone(temp, direction, time + 1));
             }
         }
         return answer;
@@ -199,5 +116,18 @@ public class Solution {
         int ny = location[1] + loY[d];
 
         return nx < 0 || nx >= N || ny < 0 || ny >= N || board[nx][ny] != 0;
+    }
+}
+
+class Drone {
+
+    int[][] location;
+    boolean direction;
+    int time;
+
+    public Drone(int[][] location, boolean direction, int time) {
+        this.location = location;
+        this.direction = direction;
+        this.time = time;
     }
 }
