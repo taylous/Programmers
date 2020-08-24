@@ -1,5 +1,3 @@
-package KAKAOBLINDRECRUIMENT.가사검색;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;

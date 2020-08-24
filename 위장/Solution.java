@@ -1,5 +1,3 @@
-package 위장;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
